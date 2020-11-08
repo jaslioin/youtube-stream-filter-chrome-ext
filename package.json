@@ -1,0 +1,17 @@
+{
+  "name": "youtube-stream-filter-chrome-ext",
+  "version": "1.0.0",
+  "description": "A chrome extension to calculate and reminder you what kind of date today is, don't get bashed by your gf for not remembering what memorable date today is!",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.13.0"
+  },
+  "dependencies": {
+    "@types/chrome": "0.0.126"
+  }
+}
