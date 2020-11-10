@@ -1,5 +1,6 @@
 {
   "name": "Youtube stream chat filter",
+  "options_page": "options.html",
   "background": {
     "page": "background.html"
   },
@@ -7,11 +8,14 @@
     "default_popup": "popup.html",
     "default_icon": "icon-34.png"
   },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
   "icons": {
     "128": "icon-128.png"
   },
   "content_scripts": [{
-    "matches": ["http://www.youtube.com/*", "https://www.youtube.com/*"],
+    "matches": ["http://*/*", "https://*/*", "<all_urls>"],
     "js": ["contentScript.bundle.js"],
     "css": ["content.styles.css"]
   }],

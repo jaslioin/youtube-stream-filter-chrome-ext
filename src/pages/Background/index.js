@@ -1,31 +1,11 @@
 import '../../assets/img/icon-34.png';
 import '../../assets/img/icon-128.png';
+import { MESSAGE_TYPE } from '../../constant/message-type';
 
-// chrome.alarms.create("notify_date", {
-//   when: Date.now() + 60000,
-// });
-// chrome.alarms.onAlarm.addListener(function () {
-//   chrome.notifications.create({
-//     type: "basic",
-//     iconUrl: "icon.png",
-//     title: "Time to Hydrate",
-//     message: "Everyday I'm Guzzlin'!",
-//     buttons: [{ title: "Notify again in 1 minute" }],
-//     priority: 0,
-//   });
-//   chrome.notifications.onButtonClicked.addListener(function () {
-//     chrome.alarms.create("notify_date", {
-//       when: Date.now() + 60000,
-//     });
-//   });
-
-
-
-// });
 let lastTabId;
 console.log("[background] js loaded");
 // msg to content
-function sendMessage (msg) {
+function sendMessageToTab (msg) {
 	// find active tab
 	chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
 		if(!tabs || tabs.length===0){
@@ -52,47 +32,50 @@ chrome.browserAction.onClicked.addListener(function () {
 	console.log("[background] browserAction clicked");
 });
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-	console.log("[background] msg received from ",sender.id);
+	console.log("[background] msg received from ",sender);
 	console.log(msg);
-
-	if (msg.clicked) {
-		/* Do the usual onClicked stuff */
-		console.log("[background] popup icon tapped");
-		chrome.runtime.sendMessage({
-			type:"init"
-		});
-		sendMessage({
-			type:"init-content-script"
-		});
-	}
-	if(msg.type==="query-chat"){
-		if(msg.sender==="content"){
-			chrome.runtime.sendMessage({
-				type:"query-chat",
-				sender:"background",
-				result:msg.result
-			});
-		}else{
-			sendMessage({
-				type:"query-chat",
-				filter:msg.filter
-			},);
-		}
-		
-	}
-
-});
-
-function contentResponseHandler(res){
-	if(!res.type){
+	if(!msg || !msg.type){
+		console.warn("[background] type missing");
 		return;
 	}
-	console.log("[background] received response from [content]");
-	console.log("------------------------------------");
-	switch(res.type){
-	    case "send-chat-list":
-        
+	switch (msg.type) {
+		case MESSAGE_TYPE.clickIcon:
+			/* Do the usual onClicked stuff */
+			console.log("[background] popup icon tapped");
+			chrome.runtime.sendMessage({
+				type:MESSAGE_TYPE.init
+			});
+			sendMessageToTab({
+				type:MESSAGE_TYPE.init
+			});
+			break;
+		case MESSAGE_TYPE.queryChat:
+			if(msg.sender==="content"){
+				chrome.runtime.sendMessage({
+					type:MESSAGE_TYPE.queryChat,
+					sender:"background",
+					result:msg.result
+				});
+			}else if(msg.sender==='popup'){
+				sendMessageToTab({
+					type:MESSAGE_TYPE.queryChat,
+					filter:msg.filter
+				},);
+			}
+			break
+		case MESSAGE_TYPE.stopInterval:
+			sendMessageToTab({
+				type:MESSAGE_TYPE.stopInterval
+			});
+			break;
+		case MESSAGE_TYPE.validateOrigin:
+			if(!sender.origin.match(/https?:\/\/www.youtube.com\/?.*/)){
+				console.log("[background] not in youtube, disable extention");
+				chrome.browserAction.disable()
+			}
+			break;
+		default:
+			break;
 	}
-	console.log("------------------------------------");
+});
 
-}

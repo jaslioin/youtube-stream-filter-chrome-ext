@@ -1,11 +1,20 @@
 {
+  "env": {
+     "test": {
+       "plugins": [
+        "react-hot-loader/babel"
+       ]
+     },
+     "production": {
+       "plugins": [
+        "react-hot-loader/babel",
+        "transform-remove-console"
+       ]
+     }
+  },
   "presets": [
     // "@babel/preset-env",
     // "@babel/preset-react"
     "react-app"
-  ],
-  "plugins": [
-    // "@babel/plugin-proposal-class-properties",
-    "react-hot-loader/babel"
   ]
 }

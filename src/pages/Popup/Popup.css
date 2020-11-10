@@ -1,0 +1,25 @@
+#ytb-stream-filter {
+  display: flex;
+  background-color: black;
+}
+.App {
+  min-height: 300px;
+  color: white;
+}
+#result {
+  max-height: 360px;
+  overflow: scroll;
+}
+
+#activity-indicator-wrap {
+  display: flex;
+}
+#activity-indicator {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 1rem;
+  align-self: center;
+}
+#activity-indicator-text {
+  font-size: 2rem;
+}
