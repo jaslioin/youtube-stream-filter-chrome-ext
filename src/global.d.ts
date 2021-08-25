@@ -8,5 +8,5 @@ declare module "*.svg"{
 }
 
 declare interface Element{
-    contentWindow:any
+    contentWindow:any;
 }

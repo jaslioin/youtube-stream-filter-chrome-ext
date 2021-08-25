@@ -1,6 +1,6 @@
-import '../../assets/img/icon-34.png';
-import '../../assets/img/icon-128.png';
-import { MessageType } from '../../constant/message-type';
+import '@/assets/img/icon-34.png';
+import '@/assets/img/icon-128.png';
+import { MessageType } from '@/constant/message-type';
 
 let lastTabId;
 console.log("[background] js loaded");

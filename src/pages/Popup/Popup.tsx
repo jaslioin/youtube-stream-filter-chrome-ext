@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { debounce, isNullOrUndef } from '../../../utils/helper';
-import { MessageType } from '../../constant/message-type';
+import { debounce, isNullOrUndef } from '@/helpers';
+import { MessageType } from '@/constant/message-type';
 import './Popup.css';
 enum LiveState {
   Live = 'LIVE',

@@ -11,6 +11,7 @@ const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 var alias = {
   'react-dom': '@hot-loader/react-dom',
+  '@': path.resolve(__dirname, 'src/'),
 };
 
 // load the secrets
@@ -102,7 +103,7 @@ var options = {
   resolve: {
     alias: alias,
     extensions: fileExtensions
-      .map((extension) => '.' + extension)
+      .map(extension => '.' + extension)
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
   },
   plugins: [
