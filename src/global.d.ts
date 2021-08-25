@@ -10,3 +10,7 @@ declare module "*.svg"{
 declare interface Element{
     contentWindow:any;
 }
+declare interface Message{
+    type:string,
+    result:string[]
+}

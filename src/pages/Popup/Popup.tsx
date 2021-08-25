@@ -2,17 +2,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { debounce, isNullOrUndef } from '@/helpers';
 import { MessageType } from '@/constant/message-type';
 import './Popup.css';
+import styled from 'styled-components';
+import { ActiveIndicator, Error } from '@/components';
+import { ChangeEvent } from 'react';
 enum LiveState {
   Live = 'LIVE',
   OFFLINE = 'OFFLINE',
 }
 const Popup = () => {
   const [filterInput, setFilter] = useState('');
-  const [resultList, setResult] = useState([]);
+  const [resultList, setResult] = useState<string[]>([]);
   const [isReceivingMsg, setIsReceiving] = useState(false);
+  const [error, setError] = useState('');
   function requestFilter() {
     console.log('[popup] filter input: ', filterInput);
     if (isNullOrUndef(filterInput)) {
+      setError('filterInput invalid!');
       return;
     }
     chrome.runtime.sendMessage({
@@ -21,7 +26,7 @@ const Popup = () => {
       filter: filterInput,
     });
   }
-  function updateFilterInput(e) {
+  function updateFilterInput(e: ChangeEvent<HTMLInputElement>) {
     e.persist();
     setFilter(e.target.value);
   }
@@ -33,9 +38,15 @@ const Popup = () => {
       });
     } catch (e) {
       console.warn(e);
+      setError(String(e));
     }
   }
-  function onMessage(msg, sender, sendResponse) {
+  function onMessage(
+    msg: Message,
+    sender: chrome.runtime.MessageSender,
+    sendResponse: (response?: any) => void
+  ) {
+    setError('');
     console.log('[popup] received msg from [background] ', sender);
     console.log(msg);
     setIsReceiving(true);
@@ -67,54 +78,82 @@ const Popup = () => {
       chrome.runtime.onMessage.addListener(onMessage);
     } catch (e) {
       console.warn('[popup] ', e);
+      setError(String(e));
     }
     return () => {
-      chrome.runtime.onMessage.removeListener(onMessage);
-      stopInterval();
+      try {
+        chrome.runtime.onMessage.removeListener(onMessage);
+        stopInterval();
+      } catch (e) {
+        console.log(e);
+        setError(String(e));
+      }
     };
   }, []);
   return (
-    <div className="App">
+    <div>
       <ActiveIndicator
         isActive={isReceivingMsg}
         text={isReceivingMsg ? LiveState.Live : LiveState.OFFLINE}
       />
       <div id="ytb-stream-filter">
-        <input
-          type="text"
-          id="filter"
-          defaultValue={filterInput}
-          onChange={updateFilterInput}
-        />
-        <button id="action-button" onClick={requestFilter}>
-          start
-        </button>
-        <button id="stop-button" onClick={stopInterval}>
-          stop
-        </button>
+        <form onSubmit={e => e.preventDefault()}>
+          <input
+            type="text"
+            id="filter"
+            defaultValue={filterInput}
+            onChange={updateFilterInput}
+          />
+          <button id="action-button" type="submit" onClick={requestFilter}>
+            start
+          </button>
+          <button id="stop-button" type="button" onClick={stopInterval}>
+            stop
+          </button>
+        </form>
       </div>
-      <ChatDisplay textList={resultList} />
-      {/* <ChatDisplay textList={Array.from({length:100},(_,i)=>`placeholder_${i}`)}/> */}
+      {error ? <Error message={error} /> : ''}
+      <ChatScroll textList={resultList} />
+      {/* <ChatScroll
+        textList={Array.from(
+          { length: 100 },
+          (_, k) =>
+            'test'
+        )}
+      /> */}
     </div>
   );
 };
-function ChatDisplay({ textList }) {
-  console.log('RENDER>>>>>>>>>');
+
+function ChatScroll({ textList }: { textList: string[] }) {
   const renderedItem = textList.map((text, id) => {
-    return <div key={id}>{text}</div>;
+    return (
+      <ChatScroll.Row key={id}>
+        <ChatScroll.Icon />
+        <ChatScroll.Message>{text}</ChatScroll.Message>
+      </ChatScroll.Row>
+    );
   });
   return <div id="result">{renderedItem}</div>;
 }
-function ActiveIndicator({ isActive, text }) {
-  const style = {
-    backgroundColor: isActive ? 'green' : 'red',
-  };
 
-  return (
-    <div id="activity-indicator-wrap">
-      <div id="activity-indicator" style={style}></div>
-      <span id="activity-indicator-text">{text}</span>
-    </div>
-  );
-}
+ChatScroll.Message = styled.div`
+  overflow: hidden;
+  text-overflow: clip;
+  word-break: break-all;
+`;
+ChatScroll.Icon = styled.div`
+  border: 1px solid green;
+  width: 32px;
+  height: 32px;
+  background: green;
+  border-radius: 50%;
+  flex-shrink: 0;
+`;
+ChatScroll.Row = styled.div`
+  display: flex;
+  gap:4px;
+  margin:4px;
+  border:1px dashed orange;
+`;
 export default Popup;
