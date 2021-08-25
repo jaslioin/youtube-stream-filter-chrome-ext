@@ -1,8 +1,9 @@
-export const isNullOrUndef = (val) => {
+export const isNullOrUndef = (val: any) => {
   return val === null || val === undefined;
 };
-export function debounce(func, wait, immediate) {
-  var timeout, args, context, timestamp, result;
+
+export function debounce(func: () => void, wait: number, immediate?: boolean) {
+  let timeout: any, args: any, context: any, timestamp: any, result: any;
   if (null == wait) wait = 100;
 
   function later() {
@@ -31,23 +32,6 @@ export function debounce(func, wait, immediate) {
     }
 
     return result;
-  };
-
-  debounced.clear = function () {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-  };
-
-  debounced.flush = function () {
-    if (timeout) {
-      result = func.apply(context, args);
-      context = args = null;
-
-      clearTimeout(timeout);
-      timeout = null;
-    }
   };
 
   return debounced;

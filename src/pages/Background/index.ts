@@ -1,6 +1,6 @@
 import '../../assets/img/icon-34.png';
 import '../../assets/img/icon-128.png';
-import { MESSAGE_TYPE } from '../../constant/message-type';
+import { MessageType } from '../../constant/message-type';
 
 let lastTabId;
 console.log("[background] js loaded");
@@ -39,36 +39,36 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 		return;
 	}
 	switch (msg.type) {
-		case MESSAGE_TYPE.clickIcon:
+		case MessageType.clickIcon:
 			/* Do the usual onClicked stuff */
 			console.log("[background] popup icon tapped");
 			chrome.runtime.sendMessage({
-				type:MESSAGE_TYPE.init
+				type:MessageType.init
 			});
 			sendMessageToTab({
-				type:MESSAGE_TYPE.init
+				type:MessageType.init
 			});
 			break;
-		case MESSAGE_TYPE.queryChat:
+		case MessageType.queryChat:
 			if(msg.sender==="content"){
 				chrome.runtime.sendMessage({
-					type:MESSAGE_TYPE.queryChat,
+					type:MessageType.queryChat,
 					sender:"background",
 					result:msg.result
 				});
 			}else if(msg.sender==='popup'){
 				sendMessageToTab({
-					type:MESSAGE_TYPE.queryChat,
+					type:MessageType.queryChat,
 					filter:msg.filter
 				},);
 			}
 			break
-		case MESSAGE_TYPE.stopInterval:
+		case MessageType.stopInterval:
 			sendMessageToTab({
-				type:MESSAGE_TYPE.stopInterval
+				type:MessageType.stopInterval
 			});
 			break;
-		case MESSAGE_TYPE.validateOrigin:
+		case MessageType.validateOrigin:
 			if(!sender.origin.match(/https?:\/\/www.youtube.com\/?.*/)){
 				console.log("[background] not in youtube, disable extention");
 				chrome.browserAction.disable()

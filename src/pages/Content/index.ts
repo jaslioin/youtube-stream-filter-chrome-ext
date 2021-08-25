@@ -1,25 +1,25 @@
-import { MESSAGE_TYPE } from '../../constant/message-type';
+import { MessageType } from '../../constant/message-type';
 import { printLine } from './modules/print';
 
 let t;
 console.log("[content] js loaded");
 chrome.runtime.sendMessage({
-	type:MESSAGE_TYPE.validateOrigin,
+	type:MessageType.validateOrigin,
 	sender:"content",
 });
 chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
 	console.log("[content] received msg from [background]");
 	console.log(msg);
-	if(msg.type===MESSAGE_TYPE.init){
+	if(msg.type===MessageType.init){
 		// placeholder
 	}
-	if(msg.type===MESSAGE_TYPE.queryChat){
+	if(msg.type===MessageType.queryChat){
 		try{
 			const msgEleList = document.querySelector("#chat #chatframe")
 				.contentWindow.document
 				.querySelectorAll("span#message");
 			// chrome.runtime.sendMessage({
-			// 	type:MESSAGE_TYPE.queryChat,
+			// 	type:MessageType.queryChat,
 			// 	sender:"content",
 			// 	result:msgEleList
 			// });
@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
 						}
 					});
 					chrome.runtime.sendMessage({
-						type:MESSAGE_TYPE.queryChat,
+						type:MessageType.queryChat,
 						sender:"content",
 						result:filteredList
 					});
@@ -58,13 +58,13 @@ chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
 			},1000);
 		}catch(e){
 			chrome.runtime.sendMessage({
-				type:MESSAGE_TYPE.queryChat,
+				type:MessageType.queryChat,
 				sender:"content",
 				result:[]
 			});
 		}
 	}
-	if(msg.type===MESSAGE_TYPE.stopInterval){
+	if(msg.type===MessageType.stopInterval){
 		clearInterval(t)
 	}
 	// clearInterval(t);
@@ -77,7 +77,11 @@ chrome.runtime.onMessage.addListener(function(msg, _, sendResponse) {
 document.addEventListener("DOMContentLoaded",function(){
 
 });
+const isIFrame = (input: HTMLElement | null): input is HTMLIFrameElement =>
+    input !== null && input.tagName === 'IFRAME';
+
 function filterChat(filterRegex='[a-zA-Z]'){
+
 	const chatIframeDocument =document.querySelector("#chat #chatframe").contentWindow.document;
 	const chatRendererNodes = chatIframeDocument.querySelectorAll("yt-live-chat-text-message-renderer.yt-live-chat-item-list-renderer");
 	chatRendererNodes.forEach((node,idx)=>{

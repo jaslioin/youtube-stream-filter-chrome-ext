@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { debounce, isNullOrUndef } from '../../../utils/helper';
-import { MESSAGE_TYPE } from '../../constant/message-type';
+import { MessageType } from '../../constant/message-type';
 import './Popup.css';
 enum LiveState {
   Live = 'LIVE',
@@ -16,7 +16,7 @@ const Popup = () => {
       return;
     }
     chrome.runtime.sendMessage({
-      type: MESSAGE_TYPE.queryChat,
+      type: MessageType.queryChat,
       sender: 'popup',
       filter: filterInput,
     });
@@ -28,7 +28,7 @@ const Popup = () => {
   function stopInterval() {
     try {
       chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.stopInterval,
+        type: MessageType.stopInterval,
         sender: 'popup',
       });
     } catch (e) {
@@ -41,10 +41,10 @@ const Popup = () => {
     setIsReceiving(true);
     setInActive();
     switch (msg.type) {
-      case MESSAGE_TYPE.init:
+      case MessageType.init:
         console.log('[popup] init');
         break;
-      case MESSAGE_TYPE.queryChat:
+      case MessageType.queryChat:
         console.log(msg.result);
         if (!msg.result || msg.result.length === 0) {
           return;
@@ -62,7 +62,7 @@ const Popup = () => {
     // notify bg about the click on icon
     try {
       chrome.runtime.sendMessage({
-        type: MESSAGE_TYPE.clickIcon,
+        type: MessageType.clickIcon,
       });
       chrome.runtime.onMessage.addListener(onMessage);
     } catch (e) {
