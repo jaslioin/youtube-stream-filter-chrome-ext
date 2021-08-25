@@ -11,7 +11,7 @@
     "test": "node utils/test.js",
     "build": "node utils/build.js",
     "start": "node utils/webserver.js",
-    "prettier": "prettier --write '**/*.{js,jsx,css,html}'"
+    "prettier": "prettier --write '**/*.{js,tsx,jsx,css,html}'"
   },
   "dependencies": {
     "@hot-loader/react-dom": "^17.0.0",
@@ -35,6 +35,7 @@
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^5.0.0",
     "eslint": "^7.12.1",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",
